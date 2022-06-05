@@ -44,8 +44,7 @@ class Handler(object):
 
     def get_all_previous_and_current_frames_idx(self):
         """
-        This function clusters together frames based on the k number representing the number of
-        previous frames.
+        This function clusters together the indices of the previous and current frames.
         :return: a numpy Array of all the relevant frames clustered together.
         """
         return np.concatenate([np.repeat(np.flatnonzero(self.ids == i), 2)[1:-1].reshape(-1, 2)
@@ -54,8 +53,8 @@ class Handler(object):
     def cluster_data(self, attribute, idx):
         """
         This function clusters a data set elements together as previous and current elements.
-        :param idx: array of indices for previous and current elements.
         :param attribute: The specific data set to be clustered.
+        :param idx: array of indices for previous and current elements.
         :return: numpy Array of the clustered data.
         """
         attr = getattr(self, attribute)

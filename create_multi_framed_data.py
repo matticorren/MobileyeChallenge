@@ -4,6 +4,7 @@ import argparse
 # Internal imports
 from handler import Handler
 
+# Constants
 INPUT = ".\\training_data"
 OUTPUT = ".\\output"
 

@@ -15,7 +15,7 @@ handler1 = Handler(input_dir=INPUT, output_dir=TEST_SINGLE)
 handler2 = Handler(input_dir=OUTPUT, output_dir=TEST_MULTIPLE)
 
 
-@pytest.mark.parametrize("index", "handler", [121, handler1], [151, handler1], [188, handler1])
+# @pytest.mark.parametrize("index", "handler", [121, handler1], [151, handler1], [188, handler1])
 def validate_extraction_single_frame(index, handler):
     """
     This function validates whether the extraction of the data was successful.
@@ -29,7 +29,7 @@ def validate_extraction_single_frame(index, handler):
                            ratios=handler.ratios[index].reshape(4))
 
 
-@pytest.mark.parametrize("index", "handler", [120, handler2], [151, handler2], [188, handler2])
+# @pytest.mark.parametrize("index", "handler", [120, handler2], [151, handler2], [188, handler2])
 def validate_extraction_both_frames(index, handler):
     """
     This function validates whether the manipulation of the data was successful.
@@ -45,6 +45,9 @@ def validate_extraction_both_frames(index, handler):
 
 
 def test():
+    """
+    main test function.
+    """
     validate_extraction_single_frame(120, handler1)
     validate_extraction_both_frames(151, handler2)
     validate_extraction_both_frames(188, handler2)

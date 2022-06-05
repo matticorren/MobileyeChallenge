@@ -1,0 +1,32 @@
+{    
+    "sticks": {
+      "width": 9,
+      "height": 1,
+      "channels": 1,
+      "type": "float32"
+    },
+    "ratios": {
+      "width": 4,
+      "height": 1,
+      "channels": 1,
+      "type": "float32"
+    },
+    "frames": {
+      "width": 1,
+      "height": 1,
+      "channels": 1,
+      "type": "uint32"
+    },
+    "ids": {
+      "width": 1,
+      "height": 1,
+      "channels": 1,
+      "type": "uint32"
+    },
+    "images": {
+      "width": 80,
+      "height": 80,
+      "channels": 1,
+      "type": "uint8"
+    }
+}

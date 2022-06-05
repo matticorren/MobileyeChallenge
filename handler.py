@@ -4,9 +4,6 @@ import json
 import numpy as np
 from pathlib import Path
 
-# Internal imports
-from plot_image_with_labels import plot_image_with_labels
-
 
 class Handler(object):
     """
@@ -33,7 +30,6 @@ class Handler(object):
         self.sticks = self._extract_bin("sticks")
         self.ratios = self._extract_bin("ratios")
         self.images = self._extract_bin("images")
-        print(self.images)
 
     def _extract_bin(self, attribute):
         """
@@ -46,16 +42,37 @@ class Handler(object):
         h, w, c = attr["height"], attr["width"], attr["channels"]
         return base.reshape(base.size//(h*w), h, w, c)
 
-    def validate_extraction(self, index):
+    def get_all_previous_and_current_frames_idx(self, k=1):
         """
-        This function validates whether the extraction of the data was successful
-        :param index: The index of the frame to be shown.
+        This function clusters together frames based on the k number representing the number of
+        previous frames.
+        :param k: the number of previous frames to make use of.
+        :return: a numpy Array of all the relevant frames clustered together.
         """
-        plot_image_with_labels(image=self.images[index].reshape(80, 80),
-                               sticks=self.sticks[index].reshape(9),
-                               sample_id=self.ids[index].reshape(1)[0],
-                               sample_frame=self.frames[index].reshape(1)[0],
-                               ratios=self.ratios[index].reshape(4))
+        return np.concatenate([np.repeat(np.flatnonzero(self.ids == i), k+1)[1:-1].reshape(-1, k+1)
+                               for i in np.unique(self.ids)])
+
+    def cluster_data(self, attribute):
+        """
+        This function clusters a data set elements together as previous and current elements.
+        :param attribute: The specific dataset to be clustered.
+        :return: numpy Array of the clustered data.
+        """
+        idx = self.get_all_previous_and_current_frames_idx()
+        attr = self.__getattribute__(attribute)
+        prev = attr[idx[:, 0]]
+        curr = attr[idx[:, 1]]
+        return np.concatenate((curr, prev), axis=3)
+
+    def reorganize_dataset(self):
+        """
+        This function is responsible for the reorganization of the datasets according
+        to the instructions.
+        """
+        self.cluster_data("images").tofile(os.path.join(self.output_dir, "images.bin"))
+        self.cluster_data("sticks").tofile(os.path.join(self.output_dir, "sticks.bin"))
+        self.cluster_data("frames").tofile(os.path.join(self.output_dir, "frames.bin"))
+        self.cluster_data("ratios").tofile(os.path.join(self.output_dir, "ratios.bin"))
 
 
 class InvalidPath(Exception):

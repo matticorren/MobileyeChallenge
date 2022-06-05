@@ -1,16 +1,16 @@
 # External imports
-import numpy as np
 import argparse
 
 # Internal imports
 from handler import Handler
 
 INPUT = ".\\training_data"
-OUTPUT = ".\\"
+OUTPUT = ".\\output"
+
 
 def create_multi_framed_data(input=INPUT, output=OUTPUT):
     hand = Handler(input, output)
-    hand.validate_extraction(360)
+    hand.reorganize_dataset()
 
 
 def main():

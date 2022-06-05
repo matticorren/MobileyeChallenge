@@ -150,7 +150,7 @@ def add_sample_frame_and_id(sample_frame: int, sample_id: int):
                 bbox={"color": "orange", "alpha": 0.5, "pad": 5})
 
 
-def plot_image_with_labels(image: np.ndarray, 
+def plot_image_with_labels(image: np.ndarray,
                            sticks: np.ndarray, 
                            sample_id: int, 
                            sample_frame: int,

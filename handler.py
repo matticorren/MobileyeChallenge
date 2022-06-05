@@ -40,26 +40,24 @@ class Handler(object):
         attr = self.data_struct[attribute]
         base = np.fromfile(self.files[attribute], attr["type"])
         h, w, c = attr["height"], attr["width"], attr["channels"]
-        return base.reshape(base.size//(h*w), h, w, c)
+        return base.reshape(-1, h, w, c)
 
-    def get_all_previous_and_current_frames_idx(self, k=1):
+    def get_all_previous_and_current_frames_idx(self):
         """
-        This function clusters together frames based on the k number representing the number of
-        previous frames.
-        :param k: the number of previous frames to make use of.
+        This function clusters together the indices of the previous and current frames.
         :return: a numpy Array of all the relevant frames clustered together.
         """
-        return np.concatenate([np.repeat(np.flatnonzero(self.ids == i), k+1)[1:-1].reshape(-1, k+1)
+        return np.concatenate([np.repeat(np.flatnonzero(self.ids == i), 2)[1:-1].reshape(-1, 2)
                                for i in np.unique(self.ids)])
 
-    def cluster_data(self, attribute):
+    def cluster_data(self, attribute, idx):
         """
         This function clusters a data set elements together as previous and current elements.
-        :param attribute: The specific dataset to be clustered.
+        :param attribute: The specific data set to be clustered.
+        :param idx: array of indices for previous and current elements.
         :return: numpy Array of the clustered data.
         """
-        idx = self.get_all_previous_and_current_frames_idx()
-        attr = self.__getattribute__(attribute)
+        attr = getattr(self, attribute)
         prev = attr[idx[:, 0]]
         curr = attr[idx[:, 1]]
         return np.concatenate((curr, prev), axis=3)
@@ -69,10 +67,10 @@ class Handler(object):
         This function is responsible for the reorganization of the datasets according
         to the instructions.
         """
-        self.cluster_data("images").tofile(os.path.join(self.output_dir, "images.bin"))
-        self.cluster_data("sticks").tofile(os.path.join(self.output_dir, "sticks.bin"))
-        self.cluster_data("frames").tofile(os.path.join(self.output_dir, "frames.bin"))
-        self.cluster_data("ratios").tofile(os.path.join(self.output_dir, "ratios.bin"))
+        idx = self.get_all_previous_and_current_frames_idx()
+        for element in ["images", "sticks", "frames", "ratios"]:
+            self.cluster_data(element, idx).tofile(os.path.join(self.output_dir, element+".bin"))
+        self.ids.tofile(os.path.join(self.output_dir, "ids.bin"))
 
 
 class InvalidPath(Exception):
